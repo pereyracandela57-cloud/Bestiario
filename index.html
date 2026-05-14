@@ -76,6 +76,23 @@
     </div>
   </div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBeFZHDdt2av9I4d0EN_fFSugZ7f9prKQ",
+      authDomain: "bestiario-9a59a.firebaseapp.com",
+      projectId: "bestiario-9a59a",
+      storageBucket: "bestiario-9a59a.firebasestorage.app",
+      messagingSenderId: "877990974200",
+      appId: "1:877990974200:web:38f8f87b90ab208c52210d",
+      measurementId: "G-1WMHNEP8N8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.firebaseApp = app;
+  </script>
+
   <script>
     const openBtn = document.getElementById('openCharacterForm');
     const closeBtn = document.getElementById('closeCharacterForm');
