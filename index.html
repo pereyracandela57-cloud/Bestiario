@@ -90,10 +90,26 @@
     </div>
   </div>
 
+  <div class="modal" id="cardViewerModal" aria-hidden="true" role="dialog" aria-labelledby="cardViewerTitle">
+    <div class="modal-content viewer-content">
+      <button class="close-modal" id="closeCardViewer" type="button" aria-label="Cerrar visor">×</button>
+      <h3 id="cardViewerTitle">Visor de personaje</h3>
+      <article class="character-card viewer-card" id="viewerCard"></article>
+      <section class="viewer-story">
+        <h4>Historia</h4>
+        <p id="viewerStoryText">Sin historia.</p>
+      </section>
+    </div>
+  </div>
+
   <script>
     const openBtn = document.getElementById('openCharacterForm');
     const closeBtn = document.getElementById('closeCharacterForm');
     const modal = document.getElementById('characterModal');
+    const cardViewerModal = document.getElementById('cardViewerModal');
+    const closeCardViewerBtn = document.getElementById('closeCardViewer');
+    const viewerCard = document.getElementById('viewerCard');
+    const viewerStoryText = document.getElementById('viewerStoryText');
     const form = document.getElementById('characterForm');
     const grid = document.getElementById('characterGrid');
     const typeSelect = document.getElementById('characterType');
@@ -160,14 +176,6 @@
       formImagePreview.innerHTML = `<img src="${previewUrl}" alt="Vista previa de ${file.name}">`;
     };
 
-    const firstStoryChunk = (text) => {
-      const cleanText = (text || '').trim();
-      if (!cleanText) return 'Sin historia.';
-      const firstSentence = cleanText.match(/.*?[.!?](\s|$)/);
-      if (firstSentence) return firstSentence[0].trim();
-      return cleanText.length > 120 ? `${cleanText.slice(0, 120).trim()}...` : cleanText;
-    };
-
     const createFileFrame = (file) => {
       if (!file) {
         return `
@@ -185,8 +193,37 @@
       `;
     };
 
+    const openCardViewer = (characterData) => {
+      viewerCard.innerHTML = `
+        <header class="card-head">
+          <h3>${characterData.name}</h3>
+        </header>
+        ${characterData.fileFrame}
+        <footer class="card-foot">
+          <p><strong>Tipo:</strong> ${characterData.type}</p>
+          <p><strong>Clan:</strong> ${characterData.clan}</p>
+          <div class="stats-grid" aria-label="Puntajes del personaje">
+            <p><strong>Velocidad:</strong> ${characterData.speed}</p>
+            <p><strong>Fuerza:</strong> ${characterData.strength}</p>
+            <p><strong>Magia:</strong> ${characterData.magic}</p>
+            <p><strong>Inteligencia:</strong> ${characterData.intelligence}</p>
+          </div>
+        </footer>
+      `;
+
+      viewerStoryText.textContent = characterData.story || 'Sin historia.';
+      cardViewerModal.classList.add('open');
+      cardViewerModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeCardViewer = () => {
+      cardViewerModal.classList.remove('open');
+      cardViewerModal.setAttribute('aria-hidden', 'true');
+    };
+
     openBtn.addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
+    closeCardViewerBtn.addEventListener('click', closeCardViewer);
     typeSelect.addEventListener('change', (event) => {
       populateClans(event.target.value);
     });
@@ -199,34 +236,46 @@
     modal.addEventListener('click', (event) => {
       if (event.target === modal) closeModal();
     });
+    cardViewerModal.addEventListener('click', (event) => {
+      if (event.target === cardViewerModal) closeCardViewer();
+    });
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
       const file = fileInput.files[0];
-      const storyPreview = firstStoryChunk(form.story.value);
+      const storyText = (form.story.value || '').trim();
+      const characterData = {
+        name: form.name.value,
+        type: form.type.value,
+        clan: form.clan.value,
+        speed: form.speed.value,
+        strength: form.strength.value,
+        magic: form.magic.value,
+        intelligence: form.intelligence.value,
+        story: storyText,
+        fileFrame: createFileFrame(file)
+      };
 
       const card = document.createElement('article');
       card.className = 'character-card';
       card.innerHTML = `
         <header class="card-head">
-          <h3>${form.name.value}</h3>
+          <h3>${characterData.name}</h3>
         </header>
-        ${createFileFrame(file)}
+        ${characterData.fileFrame}
         <footer class="card-foot">
-          <p><strong>Tipo:</strong> ${form.type.value}</p>
-          <p><strong>Clan:</strong> ${form.clan.value}</p>
-          <p><strong>Edad:</strong> ${form.age.value}</p>
-          <p><strong>Nacimiento:</strong> ${form.birth.value || 'No especificado'}</p>
+          <p><strong>Tipo:</strong> ${characterData.type}</p>
+          <p><strong>Clan:</strong> ${characterData.clan}</p>
           <div class="stats-grid" aria-label="Puntajes del personaje">
-            <p><strong>Velocidad:</strong> ${form.speed.value}</p>
-            <p><strong>Fuerza:</strong> ${form.strength.value}</p>
-            <p><strong>Magia:</strong> ${form.magic.value}</p>
-            <p><strong>Inteligencia:</strong> ${form.intelligence.value}</p>
+            <p><strong>Velocidad:</strong> ${characterData.speed}</p>
+            <p><strong>Fuerza:</strong> ${characterData.strength}</p>
+            <p><strong>Magia:</strong> ${characterData.magic}</p>
+            <p><strong>Inteligencia:</strong> ${characterData.intelligence}</p>
           </div>
-          <p class="story"><strong>Historia:</strong> ${storyPreview}</p>
         </footer>
       `;
+      card.addEventListener('click', () => openCardViewer(characterData));
 
       grid.prepend(card);
       closeModal();
