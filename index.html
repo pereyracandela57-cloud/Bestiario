@@ -57,6 +57,22 @@
         <label for="characterBirth">Fecha de nacimiento (opcional)</label>
         <input id="characterBirth" name="birth" type="text" placeholder="Ej: 8 de agosto de 1460">
 
+        <fieldset class="stats-fieldset">
+          <legend>Puntajes</legend>
+
+          <label for="characterSpeed">Velocidad</label>
+          <input id="characterSpeed" name="speed" type="number" min="0" step="1" required>
+
+          <label for="characterStrength">Fuerza</label>
+          <input id="characterStrength" name="strength" type="number" min="0" step="1" required>
+
+          <label for="characterMagic">Magia</label>
+          <input id="characterMagic" name="magic" type="number" min="0" step="1" required>
+
+          <label for="characterIntelligence">Inteligencia</label>
+          <input id="characterIntelligence" name="intelligence" type="number" min="0" step="1" required>
+        </fieldset>
+
         <label for="characterStory">Historia (opcional)</label>
         <textarea id="characterStory" name="story" rows="4" placeholder="Escribe la historia"></textarea>
 
@@ -182,6 +198,12 @@
           <p><strong>Clan:</strong> ${form.clan.value}</p>
           <p><strong>Edad:</strong> ${form.age.value}</p>
           <p><strong>Nacimiento:</strong> ${form.birth.value || 'No especificado'}</p>
+          <div class="stats-grid" aria-label="Puntajes del personaje">
+            <p><strong>Velocidad:</strong> ${form.speed.value}</p>
+            <p><strong>Fuerza:</strong> ${form.strength.value}</p>
+            <p><strong>Magia:</strong> ${form.magic.value}</p>
+            <p><strong>Inteligencia:</strong> ${form.intelligence.value}</p>
+          </div>
           <p class="story"><strong>Historia:</strong> ${storyPreview}</p>
         </footer>
       `;
