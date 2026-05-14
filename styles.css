@@ -64,9 +64,13 @@ body {
 .panel-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
 .panel-header h2 { margin: 0; font-family: "Uncial Antiqua", cursive; color: var(--gold-bright); }
 
-.character-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; }
+.character-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 280px)); gap: 1.1rem; }
 
 .character-card {
+  cursor: pointer;
+  aspect-ratio: 5 / 7;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   border-radius: 16px;
   overflow: hidden;
   border: 2px solid rgba(230, 218, 176, 0.55);
@@ -89,11 +93,11 @@ body {
 .card-head h3 { margin: 0; color: #fff5d4; text-shadow: 0 2px 3px rgba(0, 0, 0, 0.75); }
 
 .file-frame {
-  margin: 1rem;
+  margin: 0.8rem;
   border-radius: 12px;
   border: 1px solid rgba(248, 222, 154, 0.4);
   background: radial-gradient(circle at 30% 20%, rgba(251, 236, 199, 0.16), rgba(38, 35, 43, 0.9));
-  min-height: 180px;
+  min-height: 100%;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -103,7 +107,6 @@ body {
 .file-preview {
   width: 100%;
   height: 100%;
-  min-height: 180px;
   object-fit: cover;
   display: block;
 }
@@ -134,13 +137,12 @@ body {
 .red-cross::after { transform: rotate(-45deg); }
 
 .card-foot {
-  padding: 0.85rem 1rem 1rem;
+  padding: 0.8rem 1rem 1rem;
   border-top: 1px solid rgba(221, 195, 130, 0.3);
   background: linear-gradient(180deg, rgba(22, 20, 24, 0.55), rgba(8, 8, 10, 0.75));
 }
 
-.card-foot p { margin: 0.35rem 0; color: #ecd9b0; }
-.story { color: #f2e7cb; }
+.card-foot p { margin: 0.3rem 0; color: #ecd9b0; font-size: 0.9rem; }
 
 .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 20; }
 .modal.open { display: flex; }
@@ -197,10 +199,25 @@ body {
 }
 .form-submit { grid-column: 1 / -1; }
 .stats-grid {
-  margin: 0.6rem 0;
+  margin: 0.5rem 0 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(130px, 1fr));
   gap: 0.4rem 0.8rem;
+}
+.viewer-content {
+  width: min(760px, 100%);
+}
+.viewer-card {
+  margin: 0.6rem auto 1rem;
+  width: min(320px, 100%);
+}
+.viewer-story h4 {
+  margin: 0 0 0.5rem;
+  color: var(--gold-bright);
+}
+.viewer-story p {
+  margin: 0;
+  line-height: 1.5;
 }
 
 @keyframes flicker { 0% { opacity: 0.22; } 20% { opacity: 0.18; } 40% { opacity: 0.26; } 60% { opacity: 0.2; } 80% { opacity: 0.28; } 100% { opacity: 0.19; } }
