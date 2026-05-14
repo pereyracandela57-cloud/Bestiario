@@ -44,7 +44,12 @@
         <input id="characterName" name="name" type="text" required>
 
         <label for="characterType">Tipo</label>
-        <input id="characterType" name="type" type="text" required>
+        <select id="characterType" name="type" required></select>
+
+        <label for="characterClan">Clan</label>
+        <select id="characterClan" name="clan" required>
+          <option value="">Selecciona un clan</option>
+        </select>
 
         <label for="characterAge">Edad</label>
         <input id="characterAge" name="age" type="text" required>
@@ -69,6 +74,46 @@
     const modal = document.getElementById('characterModal');
     const form = document.getElementById('characterForm');
     const grid = document.getElementById('characterGrid');
+    const typeSelect = document.getElementById('characterType');
+    const clanSelect = document.getElementById('characterClan');
+
+    const clanCatalog = {
+      'Clanes de Sangre y Sombras': ['Vampiros', 'Espectros', 'Licántropos', 'Lichs', 'Dullahans', 'Nosferatu', 'Revenants', 'Sombras', 'Ghouls (Necrófagos)', 'Banshees'],
+      'Clanes de la Naturaleza (Fata)': ['Hadas', 'Dríades', 'Sátiros', 'Ninfas', 'Silfos', 'Ondinas', 'Gnomos', 'Ents', 'Leprechauns', 'Pixies'],
+      'Clanes de Guerreros y Gigantes': ['Orcos', 'Trolls', 'Ogros', 'Cíclopes', 'Goblins', 'Enanos', 'Elfos', 'Centauros', 'Minotauros', 'Hobgoblins'],
+      'Clanes de los Abismos': ['Sirenas', 'Tritones', 'Selkies', 'Kappas', 'Nixies', 'Krakens', 'Ictio-centauros'],
+      'Clanes Infernales y Celestiales': ['Demonios', 'Súcubos/Íncubos', 'Diablos', 'Ángeles', 'Querubines', 'Efrits', 'Marids', 'Nephilim'],
+      'Clanes del Este (Yokai y Mitología Asiática)': ['Kitsunes', 'Tengus', 'Onis', 'Tanukis', 'Jiangshis', 'Nagas', 'Rakshasas'],
+      'Clanes Artificiales y Alquímicos': ['Golems', 'Homúnculos', 'Autómatas', 'Gárgolas', 'Simulacros'],
+      'Clanes de Sabiduría y Magia': ['Brujos', 'Chamanes', 'Nigromantes', 'Oráculos', 'Alquimistas'],
+      'Clanes de Bestias Humanoides': ['Dracónidos', 'Arpías', 'Mantícoras', 'Grifos', 'Lamias', 'Kobolds', 'Yuan-ti'],
+      'Clanes de las Tierras Sombrías (Folklore)': ['Wendigos', 'Skin-walkers', 'Cadejos', 'Pucas', 'Huldras', 'Ghul'],
+      'Entidades del Vacío y Planos Lejanos': ['Eldritch', 'Abeil', 'Thri-kreen', 'Slaad', 'Githyanki'],
+      'Clanes de los Elementos Puros': ['Salamandras', 'Djinn', 'Dao', 'Azer', 'Genasíes'],
+      'Clanes de la No-Vida Especializada': ['Vampiros de Energía', 'Sombras de Malicia', 'Wights', 'Momias', 'Zombis Conscientes'],
+      'Órdenes y Logias Específicas': ['Paladines Oscuros', 'Valkirias', 'Einherjer', 'Berserkers', 'Dríades de Sangre'],
+      'Clanes de Ilusión y Mente': ['Doppelgängers', 'Tulpas', 'Íncubos de Pesadilla', 'Rakshasas', 'Eternos']
+    };
+
+    const populateTypes = () => {
+      typeSelect.innerHTML = '<option value=\"\">Selecciona un tipo</option>';
+      Object.keys(clanCatalog).forEach((type) => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        typeSelect.append(option);
+      });
+    };
+
+    const populateClans = (type) => {
+      clanSelect.innerHTML = '<option value=\"\">Selecciona un clan</option>';
+      (clanCatalog[type] || []).forEach((clan) => {
+        const option = document.createElement('option');
+        option.value = clan;
+        option.textContent = clan;
+        clanSelect.append(option);
+      });
+    };
 
     const openModal = () => {
       modal.classList.add('open');
@@ -108,6 +153,11 @@
 
     openBtn.addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
+    typeSelect.addEventListener('change', (event) => {
+      populateClans(event.target.value);
+    });
+
+    populateTypes();
 
     modal.addEventListener('click', (event) => {
       if (event.target === modal) closeModal();
@@ -129,6 +179,7 @@
         ${createFileFrame(file)}
         <footer class="card-foot">
           <p><strong>Tipo:</strong> ${form.type.value}</p>
+          <p><strong>Clan:</strong> ${form.clan.value}</p>
           <p><strong>Edad:</strong> ${form.age.value}</p>
           <p><strong>Nacimiento:</strong> ${form.birth.value || 'No especificado'}</p>
           <p class="story"><strong>Historia:</strong> ${storyPreview}</p>
