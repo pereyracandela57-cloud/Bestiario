@@ -29,23 +29,7 @@
           <button class="action-btn" type="button" id="openCharacterForm">Agregar personaje</button>
         </header>
 
-        <div class="character-grid" id="characterGrid">
-          <article class="character-card">
-            <h3>Sir Aldren del Norte</h3>
-            <p><strong>Nacimiento / Edad:</strong> 12 de marzo de 1452 · 34 años</p>
-            <p><strong>Tipo:</strong> Caballero</p>
-            <p class="story"><strong>Historia:</strong> Guardián de los pasos montañosos, defensor de aldeas fronterizas y veterano de la Guerra del Valle Sombrío.</p>
-            <p><strong>Archivo:</strong> Retrato_Aldren.png</p>
-          </article>
-
-          <article class="character-card">
-            <h3>Lyra de las Cenizas</h3>
-            <p><strong>Nacimiento / Edad:</strong> No especificado</p>
-            <p><strong>Tipo:</strong> Hechicera</p>
-            <p class="story"><strong>Historia:</strong> Estudió artes arcanas prohibidas en ruinas antiguas y ahora protege grimorios perdidos del reino.</p>
-            <p><strong>Archivo:</strong> Manuscrito_Lyra.pdf</p>
-          </article>
-        </div>
+        <div class="character-grid" id="characterGrid"></div>
       </section>
     </main>
   </div>
@@ -59,39 +43,25 @@
         <label for="characterName">Nombre del personaje</label>
         <input id="characterName" name="name" type="text" required>
 
-        <label for="characterBirth">Fecha de nacimiento y edad (opcional)</label>
-        <input id="characterBirth" name="birth" type="text" placeholder="Ej: 8 de agosto de 1460 · 24 años">
-
         <label for="characterType">Tipo</label>
         <input id="characterType" name="type" type="text" required>
 
-        <label for="characterStory">Historia</label>
-        <textarea id="characterStory" name="story" rows="4" required></textarea>
+        <label for="characterAge">Edad</label>
+        <input id="characterAge" name="age" type="text" required>
 
-        <label for="characterFile">Archivo desde el dispositivo</label>
-        <input id="characterFile" name="file" type="file" required>
+        <label for="characterBirth">Fecha de nacimiento (opcional)</label>
+        <input id="characterBirth" name="birth" type="text" placeholder="Ej: 8 de agosto de 1460">
+
+        <label for="characterStory">Historia (opcional)</label>
+        <textarea id="characterStory" name="story" rows="4" placeholder="Escribe la historia"></textarea>
+
+        <label for="characterFile">Archivo desde el dispositivo (opcional)</label>
+        <input id="characterFile" name="file" type="file" accept="image/*">
 
         <button class="action-btn" type="submit">Guardar personaje</button>
       </form>
     </div>
   </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCBeFZHDdt2av9I4d0EN_fFSugZ7f9prKQ",
-      authDomain: "bestiario-9a59a.firebaseapp.com",
-      projectId: "bestiario-9a59a",
-      storageBucket: "bestiario-9a59a.firebasestorage.app",
-      messagingSenderId: "877990974200",
-      appId: "1:877990974200:web:38f8f87b90ab208c52210d",
-      measurementId: "G-1WMHNEP8N8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.firebaseApp = app;
-  </script>
 
   <script>
     const openBtn = document.getElementById('openCharacterForm');
@@ -111,29 +81,58 @@
       form.reset();
     };
 
+    const firstStoryChunk = (text) => {
+      const cleanText = (text || '').trim();
+      if (!cleanText) return 'Sin historia.';
+      const firstSentence = cleanText.match(/.*?[.!?](\s|$)/);
+      if (firstSentence) return firstSentence[0].trim();
+      return cleanText.length > 120 ? `${cleanText.slice(0, 120).trim()}...` : cleanText;
+    };
+
+    const createFileFrame = (file) => {
+      if (!file) {
+        return `
+          <div class="file-frame missing-file" aria-label="Sin archivo">
+            <span class="red-cross" aria-hidden="true"></span>
+          </div>
+        `;
+      }
+
+      const previewUrl = URL.createObjectURL(file);
+      return `
+        <div class="file-frame" aria-label="Vista previa de archivo">
+          <img src="${previewUrl}" alt="Archivo de ${file.name}" class="file-preview">
+        </div>
+      `;
+    };
+
     openBtn.addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
 
     modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        closeModal();
-      }
+      if (event.target === modal) closeModal();
     });
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
       const fileInput = document.getElementById('characterFile');
-      const fileName = fileInput.files[0] ? fileInput.files[0].name : 'Sin archivo';
+      const file = fileInput.files[0];
+      const storyPreview = firstStoryChunk(form.story.value);
 
       const card = document.createElement('article');
       card.className = 'character-card';
       card.innerHTML = `
-        <h3>${form.name.value}</h3>
-        <p><strong>Nacimiento / Edad:</strong> ${form.birth.value || 'No especificado'}</p>
-        <p><strong>Tipo:</strong> ${form.type.value}</p>
-        <p class="story"><strong>Historia:</strong> ${form.story.value}</p>
-        <p><strong>Archivo:</strong> ${fileName}</p>
+        <header class="card-head">
+          <h3>${form.name.value}</h3>
+        </header>
+        ${createFileFrame(file)}
+        <footer class="card-foot">
+          <p><strong>Tipo:</strong> ${form.type.value}</p>
+          <p><strong>Edad:</strong> ${form.age.value}</p>
+          <p><strong>Nacimiento:</strong> ${form.birth.value || 'No especificado'}</p>
+          <p class="story"><strong>Historia:</strong> ${storyPreview}</p>
+        </footer>
       `;
 
       grid.prepend(card);
