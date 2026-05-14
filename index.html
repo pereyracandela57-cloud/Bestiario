@@ -23,14 +23,105 @@
     </aside>
 
     <main class="content-area">
-      <section class="illuminated-card">
-        <h2>Crónicas del Reino</h2>
-        <p>
-          Bienvenido al salón de los relatos antiguos. El fuego de las antorchas ilumina los pergaminos,
-          mientras las placas de oro y acero guardan secretos de criaturas, héroes y leyendas.
-        </p>
+      <section class="panel-section" aria-label="Sección de personajes">
+        <header class="panel-header">
+          <h2>PERSONAJES</h2>
+          <button class="action-btn" type="button" id="openCharacterForm">Agregar personaje</button>
+        </header>
+
+        <div class="character-grid" id="characterGrid">
+          <article class="character-card">
+            <h3>Sir Aldren del Norte</h3>
+            <p><strong>Nacimiento / Edad:</strong> 12 de marzo de 1452 · 34 años</p>
+            <p><strong>Tipo:</strong> Caballero</p>
+            <p class="story"><strong>Historia:</strong> Guardián de los pasos montañosos, defensor de aldeas fronterizas y veterano de la Guerra del Valle Sombrío.</p>
+            <p><strong>Archivo:</strong> Retrato_Aldren.png</p>
+          </article>
+
+          <article class="character-card">
+            <h3>Lyra de las Cenizas</h3>
+            <p><strong>Nacimiento / Edad:</strong> No especificado</p>
+            <p><strong>Tipo:</strong> Hechicera</p>
+            <p class="story"><strong>Historia:</strong> Estudió artes arcanas prohibidas en ruinas antiguas y ahora protege grimorios perdidos del reino.</p>
+            <p><strong>Archivo:</strong> Manuscrito_Lyra.pdf</p>
+          </article>
+        </div>
       </section>
     </main>
   </div>
+
+  <div class="modal" id="characterModal" aria-hidden="true" role="dialog" aria-labelledby="characterFormTitle">
+    <div class="modal-content">
+      <button class="close-modal" id="closeCharacterForm" type="button" aria-label="Cerrar formulario">×</button>
+      <h3 id="characterFormTitle">Agregar personaje</h3>
+
+      <form class="character-form" id="characterForm">
+        <label for="characterName">Nombre del personaje</label>
+        <input id="characterName" name="name" type="text" required>
+
+        <label for="characterBirth">Fecha de nacimiento y edad (opcional)</label>
+        <input id="characterBirth" name="birth" type="text" placeholder="Ej: 8 de agosto de 1460 · 24 años">
+
+        <label for="characterType">Tipo</label>
+        <input id="characterType" name="type" type="text" required>
+
+        <label for="characterStory">Historia</label>
+        <textarea id="characterStory" name="story" rows="4" required></textarea>
+
+        <label for="characterFile">Archivo desde el dispositivo</label>
+        <input id="characterFile" name="file" type="file" required>
+
+        <button class="action-btn" type="submit">Guardar personaje</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const openBtn = document.getElementById('openCharacterForm');
+    const closeBtn = document.getElementById('closeCharacterForm');
+    const modal = document.getElementById('characterModal');
+    const form = document.getElementById('characterForm');
+    const grid = document.getElementById('characterGrid');
+
+    const openModal = () => {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      form.reset();
+    };
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const fileInput = document.getElementById('characterFile');
+      const fileName = fileInput.files[0] ? fileInput.files[0].name : 'Sin archivo';
+
+      const card = document.createElement('article');
+      card.className = 'character-card';
+      card.innerHTML = `
+        <h3>${form.name.value}</h3>
+        <p><strong>Nacimiento / Edad:</strong> ${form.birth.value || 'No especificado'}</p>
+        <p><strong>Tipo:</strong> ${form.type.value}</p>
+        <p class="story"><strong>Historia:</strong> ${form.story.value}</p>
+        <p><strong>Archivo:</strong> ${fileName}</p>
+      `;
+
+      grid.prepend(card);
+      closeModal();
+    });
+  </script>
 </body>
 </html>
