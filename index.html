@@ -297,24 +297,36 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      const file = fileInput.files[0];
-      const imageUrl = await readImageAsDataURL(file);
-      const storyText = (form.story.value || '').trim();
-      const characterData = {
-        name: form.name.value,
-        type: form.type.value,
-        clan: form.clan.value,
-        speed: form.speed.value,
-        strength: form.strength.value,
-        magic: form.magic.value,
-        intelligence: form.intelligence.value,
-        story: storyText,
-        imageUrl
-      };
+      const submitBtn = form.querySelector('.form-submit');
+      submitBtn.disabled = true;
 
-      await addDoc(charactersRef, { ...characterData, createdAt: serverTimestamp() });
-      renderCharacterCard(characterData);
-      closeModal();
+      try {
+        const file = fileInput.files[0];
+        const imageUrl = await readImageAsDataURL(file);
+        const storyText = (form.elements.story.value || '').trim();
+        const characterData = {
+          name: form.elements.name.value.trim(),
+          type: form.elements.type.value,
+          clan: form.elements.clan.value,
+          age: form.elements.age.value.trim(),
+          birth: (form.elements.birth.value || '').trim(),
+          speed: form.elements.speed.value,
+          strength: form.elements.strength.value,
+          magic: form.elements.magic.value,
+          intelligence: form.elements.intelligence.value,
+          story: storyText,
+          imageUrl
+        };
+
+        await addDoc(charactersRef, { ...characterData, createdAt: serverTimestamp() });
+        renderCharacterCard(characterData);
+        closeModal();
+      } catch (error) {
+        console.error('Error al guardar personaje:', error);
+        alert('No se pudo guardar el personaje. Revisa la configuración de Firebase e intenta de nuevo.');
+      } finally {
+        submitBtn.disabled = false;
+      }
     });
 
     loadCharacters().catch((error) => {
