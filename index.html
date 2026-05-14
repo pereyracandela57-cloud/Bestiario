@@ -26,7 +26,7 @@
       <section class="panel-section" aria-label="Sección de personajes">
         <header class="panel-header">
           <h2>PERSONAJES</h2>
-          <button class="action-btn" type="button" id="openCharacterForm">Agregar personaje</button>
+          <button class="action-btn" type="button" id="openCharacterForm">➕ Agregar personaje</button>
         </header>
 
         <div class="character-grid" id="characterGrid"></div>
@@ -37,9 +37,10 @@
   <div class="modal" id="characterModal" aria-hidden="true" role="dialog" aria-labelledby="characterFormTitle">
     <div class="modal-content">
       <button class="close-modal" id="closeCharacterForm" type="button" aria-label="Cerrar formulario">×</button>
-      <h3 id="characterFormTitle">Agregar personaje</h3>
+      <h3 id="characterFormTitle">✨ Agregar personaje</h3>
 
       <form class="character-form" id="characterForm">
+        <div class="form-main-fields">
         <label for="characterName">Nombre del personaje</label>
         <input id="characterName" name="name" type="text" required>
 
@@ -57,8 +58,19 @@
         <label for="characterBirth">Fecha de nacimiento (opcional)</label>
         <input id="characterBirth" name="birth" type="text" placeholder="Ej: 8 de agosto de 1460">
 
+        <label for="characterStory">Historia (opcional)</label>
+        <textarea id="characterStory" name="story" rows="4" placeholder="Escribe la historia"></textarea>
+
+        <label for="characterFile">Foto del personaje (opcional)</label>
+        <input id="characterFile" name="file" type="file" accept="image/*">
+
+        <div class="form-image-preview" id="formImagePreview" aria-live="polite">
+          <span>🖼️ Aquí verás la vista previa de la foto</span>
+        </div>
+        </div>
+
         <fieldset class="stats-fieldset">
-          <legend>Puntajes</legend>
+          <legend>📊 Puntajes</legend>
 
           <label for="characterSpeed">Velocidad</label>
           <input id="characterSpeed" name="speed" type="number" min="0" step="1" required>
@@ -73,13 +85,7 @@
           <input id="characterIntelligence" name="intelligence" type="number" min="0" step="1" required>
         </fieldset>
 
-        <label for="characterStory">Historia (opcional)</label>
-        <textarea id="characterStory" name="story" rows="4" placeholder="Escribe la historia"></textarea>
-
-        <label for="characterFile">Archivo desde el dispositivo (opcional)</label>
-        <input id="characterFile" name="file" type="file" accept="image/*">
-
-        <button class="action-btn" type="submit">Guardar personaje</button>
+        <button class="action-btn form-submit" type="submit">💾 Guardar personaje</button>
       </form>
     </div>
   </div>
@@ -92,6 +98,8 @@
     const grid = document.getElementById('characterGrid');
     const typeSelect = document.getElementById('characterType');
     const clanSelect = document.getElementById('characterClan');
+    const fileInput = document.getElementById('characterFile');
+    const formImagePreview = document.getElementById('formImagePreview');
 
     const clanCatalog = {
       'Clanes de Sangre y Sombras': ['Vampiros', 'Espectros', 'Licántropos', 'Lichs', 'Dullahans', 'Nosferatu', 'Revenants', 'Sombras', 'Ghouls (Necrófagos)', 'Banshees'],
@@ -140,6 +148,16 @@
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       form.reset();
+      formImagePreview.innerHTML = '<span>🖼️ Aquí verás la vista previa de la foto</span>';
+    };
+
+    const renderFormPreview = (file) => {
+      if (!file) {
+        formImagePreview.innerHTML = '<span>🖼️ Aquí verás la vista previa de la foto</span>';
+        return;
+      }
+      const previewUrl = URL.createObjectURL(file);
+      formImagePreview.innerHTML = `<img src="${previewUrl}" alt="Vista previa de ${file.name}">`;
     };
 
     const firstStoryChunk = (text) => {
@@ -172,6 +190,9 @@
     typeSelect.addEventListener('change', (event) => {
       populateClans(event.target.value);
     });
+    fileInput.addEventListener('change', (event) => {
+      renderFormPreview(event.target.files[0]);
+    });
 
     populateTypes();
 
@@ -182,7 +203,6 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
-      const fileInput = document.getElementById('characterFile');
       const file = fileInput.files[0];
       const storyPreview = firstStoryChunk(form.story.value);
 
