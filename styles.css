@@ -148,8 +148,26 @@ body {
 .modal-content h3 { margin-top: 0; color: var(--gold-bright); }
 .close-modal { position: absolute; top: 0.6rem; right: 0.6rem; background: transparent; border: 0; color: var(--gold-bright); font-size: 2rem; cursor: pointer; }
 .character-form { display: grid; gap: 0.65rem; }
+.stats-fieldset {
+  margin: 0.2rem 0;
+  padding: 0.7rem;
+  border: 1px solid rgba(244, 220, 136, 0.35);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.6rem;
+}
+.stats-fieldset legend {
+  padding: 0 0.35rem;
+  color: var(--gold-bright);
+}
 .character-form label { font-size: 0.95rem; color: var(--parchment); }
 .character-form input, .character-form textarea { width: 100%; padding: 0.7rem; font-family: inherit; border: 1px solid rgba(244, 220, 136, 0.35); border-radius: 8px; background: rgba(26, 18, 12, 0.8); color: #f6ead2; }
+.stats-grid {
+  margin: 0.6rem 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 0.4rem 0.8rem;
+}
 
 @keyframes flicker { 0% { opacity: 0.22; } 20% { opacity: 0.18; } 40% { opacity: 0.26; } 60% { opacity: 0.2; } 80% { opacity: 0.28; } 100% { opacity: 0.19; } }
 @media (max-width: 840px) { .app-shell { grid-template-columns: 1fr; } .side-menu { border-right: 0; border-bottom: 2px solid rgba(212, 175, 55, 0.45); } .panel-header { flex-direction: column; align-items: stretch; } }
